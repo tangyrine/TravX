@@ -1,6 +1,9 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'homepage.dart';
+import 'mappage.dart';
+import 'buslist.dart';
 import 'authentication.dart';
 
 void main() async {
@@ -18,21 +21,36 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Firebase Auth',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: SignUpPage(),
+      debugShowCheckedModeBanner: false,
+      title: 'Bus Tracking App',
+      initialRoute: '/home',
+      onGenerateRoute: (settings) {
+        if (settings.name == '/busInfo') {
+          final args = settings.arguments as Map<String, String>;
+          return MaterialPageRoute(
+            builder: (context) => BusInfoPage(
+              sourceName: args['sourceName']!,
+              destinationName: args['destinationName']!,
+            ),
+          );
+        }
+        switch (settings.name) {
+          case '/':
+          case '/home':
+            return MaterialPageRoute(builder: (context) => HomePage());
+          case '/map':
+            return MaterialPageRoute(builder: (context) => MapPage());
+          default:
+            return MaterialPageRoute(builder: (context) => HomePage());
+        }
+      },
     );
   }
 }
