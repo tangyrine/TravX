@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'homepage.dart';
 import 'mappage.dart';
 import 'buslist.dart';
+import 'authentication.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,8 +25,6 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -39,6 +38,7 @@ class MyApp extends StatelessWidget {
             builder: (context) => BusInfoPage(
               source: args['sourceName']!,
               destination: args['destinationName']!,
+              selectedTime: args['time']!, // Now correctly passing time
             ),
           );
         }
@@ -46,8 +46,8 @@ class MyApp extends StatelessWidget {
           case '/':
           case '/home':
             return MaterialPageRoute(builder: (context) => HomePage());
-          case '/map':
-            return MaterialPageRoute(builder: (context) => MapPage());
+          case '/signup':
+            return MaterialPageRoute(builder: (context) => SignUpPage());
           default:
             return MaterialPageRoute(builder: (context) => HomePage());
         }
