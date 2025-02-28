@@ -28,7 +28,8 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => BusPage(busNo: busData['bus_no'].toString()),
+          builder: (context) =>
+              BusPage(busNo: int.parse(busData['bus_no'].toString())),
         ),
       );
     } else {
@@ -89,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              hintText: "Search bus number",
+                              hintText: "Search Bus Number",
                               prefixIcon: Icon(Icons.search),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30),

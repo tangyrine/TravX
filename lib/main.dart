@@ -5,6 +5,7 @@ import 'homepage.dart';
 import 'mappage.dart';
 import 'buslist.dart';
 import 'authentication.dart';
+import 'bookticket.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Bus Tracking App',
-      initialRoute: '/home',
+      initialRoute: '/signup',
       onGenerateRoute: (settings) {
         if (settings.name == '/busInfo') {
           final args = settings.arguments as Map<String, String>;
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
             builder: (context) => BusInfoPage(
               source: args['sourceName']!,
               destination: args['destinationName']!,
-              selectedTime: args['time']!, // Now correctly passing time
+              selectedTime: args['time']!,
             ),
           );
         }
@@ -48,6 +49,11 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(builder: (context) => HomePage());
           case '/signup':
             return MaterialPageRoute(builder: (context) => SignUpPage());
+          case '/bookticket':
+            final args = settings.arguments as int;
+            return MaterialPageRoute(
+              builder: (context) => Bookticket(busNo: args),
+            );
           default:
             return MaterialPageRoute(builder: (context) => HomePage());
         }
