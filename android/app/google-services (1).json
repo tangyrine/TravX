@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "598411781845",
+    "project_id": "travx-60626",
+    "storage_bucket": "travx-60626.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:598411781845:android:53850e60d7fa2e26cd645c",
+        "android_client_info": {
+          "package_name": "com.example.travex"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPQRbp3ezh-IsIDqSHHABhbiVm0J7QpGY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
