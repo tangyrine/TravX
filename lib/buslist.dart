@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'main.dart';
 
 class BusInfoPage extends StatefulWidget {
   final String source;
   final String destination;
 
-  BusInfoPage({required this.source, required this.destination});
+  const BusInfoPage(
+      {super.key, required this.source, required this.destination});
 
   @override
   _BusInfoPageState createState() => _BusInfoPageState();
@@ -16,12 +16,13 @@ class _BusInfoPageState extends State<BusInfoPage> {
   List<Map<String, dynamic>> buses = [];
 
   Future<void> fetchBuses() async {
+    print("Fetching buses for: ${widget.source} -> ${widget.destination}");
+    print("Querying Firestore...");
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('bus')
         .where('source_name', isEqualTo: widget.source)
         .where('destination_name', isEqualTo: widget.destination)
         .get();
-
     setState(() {
       buses = querySnapshot.docs
           .map((doc) => doc.data() as Map<String, dynamic>)

@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'homepage.dart';
 import 'mappage.dart';
 import 'buslist.dart';
-import 'authentication.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +24,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

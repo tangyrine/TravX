@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'homepage.dart'; // Import HomePage
 
 class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
+
   @override
   _SignUpPageState createState() => _SignUpPageState();
 }
@@ -90,6 +92,8 @@ class _SignUpPageState extends State<SignUpPage> {
 }
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
