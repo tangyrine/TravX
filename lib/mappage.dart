@@ -11,10 +11,11 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   LatLng? userLocation;
   List<LatLng> busStops = [
-    LatLng(15.2993, 74.1240),
-    LatLng(15.4945, 73.8213),
+    LatLng(15.2993, 74.1240), // Example bus stop 1
+    LatLng(15.4945, 73.8213), // Example bus stop 2
   ];
 
+  // Fetch User Location
   Future<void> getUserLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -31,7 +32,19 @@ class _MapPageState extends State<MapPage> {
       );
       return;
     }
-    Position position = await Geolocator.getCurrentPosition();
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        return;
+      }
+    }
+
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
     setState(() {
       userLocation = LatLng(position.latitude, position.longitude);
     });
@@ -48,22 +61,35 @@ class _MapPageState extends State<MapPage> {
     return Scaffold(
       appBar: AppBar(title: Text('Map')),
       body: FlutterMap(
-        options: MapOptions(center: userLocation ?? LatLng(0, 0), zoom: 13),
+        options: MapOptions(
+          initialCenter: userLocation ?? LatLng(15.2993, 74.1240),
+          initialZoom: 13,
+        ),
         children: [
           TileLayer(
-              urlTemplate:
-                  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
-          MarkerLayer(markers: [
-            if (userLocation != null)
-              Marker(
+            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            subdomains: ['a', 'b', 'c'],
+          ),
+          MarkerLayer(
+            markers: [
+              if (userLocation != null)
+                Marker(
                   point: userLocation!,
-                  builder: (context) =>
-                      Icon(Icons.location_pin, color: Colors.blue)),
-            ...busStops.map((stop) => Marker(
-                point: stop,
-                builder: (context) =>
-                    Icon(Icons.directions_bus, color: Colors.red))),
-          ]),
+                  width: 40,
+                  height: 40,
+                  child: Icon(Icons.location_pin, color: Colors.blue, size: 30),
+                ),
+              ...busStops.map(
+                (stop) => Marker(
+                  point: stop,
+                  width: 40,
+                  height: 40,
+                  child:
+                      Icon(Icons.directions_bus, color: Colors.red, size: 30),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

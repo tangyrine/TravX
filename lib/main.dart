@@ -36,8 +36,8 @@ class MyApp extends StatelessWidget {
           final args = settings.arguments as Map<String, String>;
           return MaterialPageRoute(
             builder: (context) => BusInfoPage(
-              sourceName: args['sourceName']!,
-              destinationName: args['destinationName']!,
+              source: args['sourceName']!,
+              destination: args['destinationName']!,
             ),
           );
         }
