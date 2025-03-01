@@ -197,3 +197,6 @@ def predict_route(request: RouteRequest):
         "stop_coordinates": stop_coordinates,
         "dest_coordinates": dest_coords
     }
+
+
+
