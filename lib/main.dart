@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Bus Tracking App',
-      initialRoute: '/home',
+      initialRoute: '/signup',
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/':
@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(builder: (context) => HomePage());
           case '/signup':
             return MaterialPageRoute(builder: (context) => SignUpPage());
+
           default:
             return MaterialPageRoute(builder: (context) => HomePage());
         }

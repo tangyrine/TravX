@@ -5,6 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 import 'bookticket.dart';
 import 'sidebar.dart';
+import 'driver.dart';
 
 class BusPage extends StatefulWidget {
   final int busNo;
@@ -28,6 +29,9 @@ class _BusPageState extends State<BusPage> {
     super.initState();
     fetchBusDetails();
     fetchDriverLocation();
+    Future.delayed(Duration.zero, () {
+      LocationService().startLocationSimulation();
+    });
   }
 
   Future<void> fetchBusDetails() async {
@@ -298,7 +302,7 @@ String _formatTime(List<dynamic>? times) {
   if (times == null || times.isEmpty) return "Unknown";
   DateTime now = DateTime.now();
   List<DateTime> validTimes = times
-      .where((t) => t is Timestamp)
+      .whereType<Timestamp>()
       .map((t) => (t as Timestamp).toDate())
       .where((time) => time.isAfter(now))
       .toList();
@@ -313,8 +317,7 @@ class MapPage extends StatelessWidget {
   final double latitude;
   final double longitude;
 
-  const MapPage({Key? key, required this.latitude, required this.longitude})
-      : super(key: key);
+  const MapPage({super.key, required this.latitude, required this.longitude});
 
   @override
   Widget build(BuildContext context) {

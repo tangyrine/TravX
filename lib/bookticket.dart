@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:travex/tickethistory.dart';
 import 'sidebar.dart'; // Import the sidebar
+import 'qr.dart';
 
 class Bookticket extends StatefulWidget {
   final int busNo; // Bus number as integer
@@ -21,6 +21,7 @@ class _BookticketState extends State<Bookticket> {
   final TextEditingController timeController =
       TextEditingController(text: "8:30");
   String selectedAmPm = "AM";
+  String? arrivalTime; // Add this line to define arrivalTime
 
   DateTime selectedDate = DateTime.now();
   String formattedDate = DateFormat('dd MMMM yyyy').format(DateTime.now());
@@ -64,28 +65,6 @@ class _BookticketState extends State<Bookticket> {
       setState(() {
         selectedDate = picked;
         formattedDate = DateFormat('dd MMMM yyyy').format(selectedDate);
-      });
-    }
-  }
-
-  void _updatePrice() {
-    int? age = int.tryParse(ageController.text.trim());
-
-    if (age != null) {
-      setState(() {
-        if (age >= 1 && age <= 22) {
-          ticketPrice = 8.0;
-        } else if (age > 22 && age <= 59) {
-          ticketPrice = 15.0;
-        } else if (age >= 60 && age <= 100) {
-          ticketPrice = 8.0;
-        } else {
-          ticketPrice = 0.0;
-        }
-      });
-    } else {
-      setState(() {
-        ticketPrice = 0.0;
       });
     }
   }
@@ -447,26 +426,8 @@ class _BookticketState extends State<Bookticket> {
                   SizedBox(height: 16),
                   buildFieldLabel("Age"),
                   SizedBox(height: 8),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: TextField(
-                      controller: ageController,
-                      keyboardType: TextInputType.number,
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      ),
-                      onChanged: (value) => _updatePrice(),
-                    ),
-                  ),
+                  buildTextField(ageController,
+                      keyboardType: TextInputType.number),
                   SizedBox(height: 24),
                 ],
               ),
@@ -487,22 +448,23 @@ class _BookticketState extends State<Bookticket> {
                         double.infinity, 56), // Full width with fixed height
                   ),
                   onPressed: () async {
-                    await bookTicket(); // Book ticket first
-                    Navigator.pushReplacement(
+                    await bookTicket();
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              UserTicketsPage()), // Navigate to TicketHistory
+                        builder: (context) => QRPage(
+                          source: source,
+                          destination: destination,
+                          date: formattedDate,
+                          departureTime: timeController.text,
+                          arrivalTime: arrivalTime ?? "To Be Determined",
+                          ticketPrice: 10.0, // ✅ Static price for now
+                          busNo: widget.busNo,
+                        ),
+                      ),
                     );
                   },
-                  child: Text(
-                    "Pay ${ticketPrice.toStringAsFixed(2)}",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Text('Book Ticket'),
                 ),
               ),
             ],

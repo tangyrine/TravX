@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:travex/tickethistory.dart';
 import 'profile.dart';
 import 'tickethistory.dart';
-//import 'tickethistory.dart';
+import 'homepage.dart';
 
 class AppSidebar extends StatelessWidget {
-  const AppSidebar({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -37,6 +34,22 @@ class AppSidebar extends StatelessWidget {
 
           SizedBox(height: 30),
 
+          // Home Button
+          ListTile(
+            title: Center(
+              child: Text(
+                "Home",
+                style: TextStyle(fontSize: 16, color: Colors.blue),
+              ),
+            ),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
+              );
+            },
+          ),
+
           // My Profile Button
           ListTile(
             title: Center(
@@ -64,7 +77,7 @@ class AppSidebar extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => UserTicketsPage()),
+                MaterialPageRoute(builder: (context) => TicketHistory()),
               );
             },
           ),

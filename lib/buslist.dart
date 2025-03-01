@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'buspage.dart';
 import 'sidebar.dart';
+import 'driver.dart';
 
 class BusInfoPage extends StatefulWidget {
   final String source;
@@ -28,26 +29,75 @@ class _BusInfoPageState extends State<BusInfoPage> {
     setState(() {
       isLoading = true; // Show loading before fetching data
     });
+
+    // Step 1: Get buses matching source
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('bus')
         .where('source_name', isEqualTo: widget.source)
-        .where('destination_name', isEqualTo: widget.destination)
         .get();
 
     DateTime selectedDateTime = _parseSelectedTime(widget.selectedTime);
 
-    setState(() {
-      buses = querySnapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
-          .where((bus) {
-        List<dynamic> departureTimes = bus['departure'] ?? [];
-        return departureTimes.any((time) {
+    List<Map<String, dynamic>> filteredBuses = [];
+
+    for (var doc in querySnapshot.docs) {
+      Map<String, dynamic> busData = doc.data() as Map<String, dynamic>;
+
+      // Step 2: Check if destination matches directly
+      if (busData['destination_name'] == widget.destination) {
+        // Step 3: Check departure time condition
+        List<dynamic> departureTimes = busData['departure'] ?? [];
+        bool isValidTime = departureTimes.any((time) {
           if (time is Timestamp) {
             return time.toDate().isAfter(selectedDateTime);
           }
           return false;
         });
-      }).toList();
+
+        if (isValidTime) {
+          filteredBuses.add(busData);
+          continue; // Skip checking stops if direct match is found
+        }
+      }
+
+      // Step 4: If no direct match, check stops inside the route document
+      String routeId = busData['route_id']; // Get route document ID
+
+      DocumentSnapshot routeDoc = await FirebaseFirestore.instance
+          .collection('bus')
+          .doc(doc.id) // Get the bus document first
+          .collection(
+              'route') // Access the route collection inside the bus document
+          .doc(routeId) // Get the specific route document
+          .get();
+
+      if (routeDoc.exists) {
+        List<dynamic> stops = routeDoc['stops'] ?? [];
+
+        bool hasDestination = stops.any((stop) {
+          return stop is Map<String, dynamic> &&
+              stop['name'] == widget.destination;
+        });
+
+        if (hasDestination) {
+          // Step 5: Check departure time condition
+          List<dynamic> departureTimes = busData['departure'] ?? [];
+          bool isValidTime = departureTimes.any((time) {
+            if (time is Timestamp) {
+              return time.toDate().isAfter(selectedDateTime);
+            }
+            return false;
+          });
+
+          if (isValidTime) {
+            filteredBuses.add(busData);
+          }
+        }
+      }
+    }
+
+    setState(() {
+      buses = filteredBuses;
       isLoading = false;
     });
   }
@@ -70,6 +120,10 @@ class _BusInfoPageState extends State<BusInfoPage> {
   void initState() {
     super.initState();
     fetchBuses();
+    Future.delayed(Duration.zero, () {
+      LocationService().startLocationSimulation();
+    });
+    // Automatically navigate to ConductorTrackingScreen
   }
 
   @override

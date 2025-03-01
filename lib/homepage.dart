@@ -3,6 +3,7 @@ import 'buslist.dart';
 import 'buspage.dart';
 import 'mappage.dart'; // Import the map page
 import 'sidebar.dart'; // Import the sidebar here
+import 'driver.dart'; // Import the driver tracking screen
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,6 +19,15 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController searchController = TextEditingController();
   String selectedTime = "8:30";
   String selectedPeriod = "AM";
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      LocationService().startLocationSimulation();
+    });
+    // Automatically navigate to ConductorTrackingScreen
+  }
+
   Future<void> searchBus(int busNumber) async {
     Navigator.push(
       context,
