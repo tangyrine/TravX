@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'homepage.dart';
-import 'mappage.dart';
-import 'buslist.dart';
 import 'authentication.dart';
-import 'bookticket.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,34 +23,21 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Bus Tracking App',
-      initialRoute: '/signup',
+      initialRoute: '/home',
       onGenerateRoute: (settings) {
-        if (settings.name == '/busInfo') {
-          final args = settings.arguments as Map<String, String>;
-          return MaterialPageRoute(
-            builder: (context) => BusInfoPage(
-              source: args['sourceName']!,
-              destination: args['destinationName']!,
-              selectedTime: args['time']!,
-            ),
-          );
-        }
         switch (settings.name) {
           case '/':
           case '/home':
             return MaterialPageRoute(builder: (context) => HomePage());
           case '/signup':
             return MaterialPageRoute(builder: (context) => SignUpPage());
-          case '/bookticket':
-            final args = settings.arguments as int;
-            return MaterialPageRoute(
-              builder: (context) => Bookticket(busNo: args),
-            );
           default:
             return MaterialPageRoute(builder: (context) => HomePage());
         }

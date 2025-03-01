@@ -3,14 +3,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-class MapPage extends StatefulWidget {
-  const MapPage({super.key});
+class Map extends StatefulWidget {
+  const Map({super.key});
 
   @override
   _MapPageState createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> {
+class _MapPageState extends State<Map> {
   LatLng? userLocation;
   List<LatLng> busStops = [
     LatLng(15.2993, 74.1240), // Example bus stop 1
@@ -61,7 +61,14 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Map')),
+      appBar: AppBar(
+        title: Text(
+          'Map',
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ),
+        backgroundColor: Color(0xFF2853E0), // Blue color
+        iconTheme: IconThemeData(color: Colors.white), // Ensure icons are white
+      ),
       body: FlutterMap(
         options: MapOptions(
           initialCenter: userLocation ?? LatLng(15.2993, 74.1240),

@@ -1,42 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'buslist.dart';
 import 'buspage.dart';
+import 'mappage.dart'; // Import the map page
+import 'sidebar.dart'; // Import the sidebar here
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController sourceController = TextEditingController();
   final TextEditingController destinationController = TextEditingController();
   final TextEditingController searchController = TextEditingController();
   String selectedTime = "8:30";
   String selectedPeriod = "AM";
-
   Future<void> searchBus(int busNumber) async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('bus')
-        .where('bus_no', isEqualTo: busNumber)
-        .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      Map<String, dynamic> busData =
-          querySnapshot.docs.first.data() as Map<String, dynamic>;
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              BusPage(busNo: int.parse(busData['bus_no'].toString())),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No bus found with number $busNumber")),
-      );
-    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BusPage(busNo: busNumber),
+      ),
+    );
   }
 
   void searchBuses() {
@@ -59,10 +47,21 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void navigateToMapPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Map(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey, // Use the GlobalKey for the Scaffold
       backgroundColor: Colors.white,
+      drawer: AppSidebar(), // Use the custom sidebar here
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -111,7 +110,13 @@ class _HomePageState extends State<HomePage> {
                             }),
                       ),
                       SizedBox(width: 10),
-                      Icon(Icons.menu, color: Colors.white, size: 30),
+                      IconButton(
+                        icon: Icon(Icons.menu, color: Colors.white, size: 30),
+                        onPressed: () {
+                          _scaffoldKey.currentState
+                              ?.openDrawer(); // Use the global key to open the drawer
+                        },
+                      ),
                     ],
                   ),
 
@@ -281,6 +286,34 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
+
+            // Map image section - added below existing content
+            SizedBox(height: 30),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 15),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromARGB(0, 119, 180, 255),
+                    blurRadius: 0,
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: GestureDetector(
+                  onTap: navigateToMapPage,
+                  child: Image.asset(
+                    'assets/map.png',
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 25),
           ],
         ),
       ),
